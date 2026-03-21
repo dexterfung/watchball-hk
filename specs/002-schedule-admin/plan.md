@@ -156,7 +156,7 @@ tests/
 
 ### Why not simpler auth?
 
-- Environment variable password (e.g., basic auth): Would work for v1 but doesn't scale to future user accounts (spec discussion mentioned potential user login for favourites). Using Supabase Auth from the start means the auth infrastructure is already in place.
+- Environment variable password (e.g., basic auth): Would protect middleware but not the database. Supabase Auth enables RLS policies that enforce write restrictions at the database level — the admin user gets INSERT/UPDATE/DELETE while the anon key is read-only. This is a concrete security benefit, not speculative.
 - Vercel Password Protection: Requires Vercel Pro ($20/mo) and doesn't provide database-level RLS integration.
 
 ## Admin UX Design

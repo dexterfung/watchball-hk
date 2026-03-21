@@ -22,8 +22,8 @@
 **Purpose**: Install admin-specific dependencies and restructure routing for admin/public separation
 
 - [ ] T001 Install admin dependencies: @headlessui/react, react-hook-form, and @supabase/ssr (if not already installed from spec 001)
-- [ ] T002 Restructure existing spec 001 pages into route group: move src/app/page.tsx and src/app/layout.tsx into src/app/(public)/ route group; create new src/app/layout.tsx as root layout (shared by both public and admin); verify public schedule still works at /
-- [ ] T003 [P] Create admin TypeScript types in src/lib/types.ts: add CreateMatchInput, CreateMatchResult, UpdateMatchInput, UpdateMatchResult, DeleteMatchInput, DeleteMatchResult, InvalidationResult, and CreateReferenceInput/Result interfaces per contracts/admin-api.md
+- [ ] T002 Restructure existing spec 001 pages into route group: move src/app/page.tsx and src/app/layout.tsx into src/app/(public)/ route group; create new src/app/layout.tsx as root layout (shared by both public and admin); verify public schedule still works at /. ⚠️ This modifies spec 001 file structure — must be performed after merging the latest 001-hk-tv-schedule branch to avoid conflicts
+- [ ] T003 [P] Create admin TypeScript types in src/lib/types.ts: add CreateMatchInput, CreateMatchResult, UpdateMatchInput, UpdateMatchResult, DeleteMatchInput, DeleteMatchResult, InvalidationResult, CreateReferenceInput/Result, and DeleteReferenceInput/Result interfaces per contracts/admin-api.md
 
 ---
 
@@ -123,8 +123,8 @@
 
 ### Implementation for User Story 5
 
-- [ ] T029 [US5] Create createReferenceItem server action in src/app/(admin)/actions/reference.ts: accepts type (competition/team/broadcaster) and name fields per CreateReferenceInput contract; inserts into the correct table; returns error on duplicate name (unique constraint violation); verifies user session
-- [ ] T030 [US5] Create ReferenceManager component in src/components/admin/ReferenceManager.tsx: tabbed UI with three tabs (Competitions, Teams, Broadcasters); each tab shows existing items as a list and an "Add" form at the top; competition/team form has nameZh (required) and nameEn (optional); broadcaster form has name (required) and type select (tv/ott); shows inline error on duplicate; new items appear in list immediately after adding
+- [ ] T029 [US5] Create createReferenceItem and deleteReferenceItem server actions in src/app/(admin)/actions/reference.ts: createReferenceItem accepts type (competition/team/broadcaster) and name fields per CreateReferenceInput contract; inserts into the correct table; returns error on duplicate name (unique constraint violation). deleteReferenceItem accepts type and id; checks for referencing matches before deleting (returns error if referenced); verifies user session on both actions
+- [ ] T030 [US5] Create ReferenceManager component in src/components/admin/ReferenceManager.tsx: tabbed UI with three tabs (Competitions, Teams, Broadcasters); each tab shows existing items as a list with a delete button per item, and an "Add" form at the top; competition/team form has nameZh (required) and nameEn (optional); broadcaster form has name (required) and type select (tv/ott); shows inline error on duplicate; new items appear in list immediately after adding
 - [ ] T031 [US5] Create reference data management page in src/app/(admin)/admin/reference/page.tsx: renders ReferenceManager component; fetches current reference data from Supabase on load
 
 **Checkpoint**: Reference data management works. New items appear in match form dropdowns without page reload.
