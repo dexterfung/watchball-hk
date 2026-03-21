@@ -72,10 +72,10 @@
 
 ### Implementation for User Story 2
 
-- [ ] T019 [US2] Create DateNavigator component in src/components/schedule/DateNavigator.tsx: displays current selected date in Traditional Chinese (e.g., 3月14日 星期五), with left/right arrow buttons for previous/next day; navigates by updating ?date= search param via router.push; touch targets ≥44×44px; no horizontal scrolling on mobile
+- [ ] T019 [US2] Create DateNavigator component in src/components/schedule/DateNavigator.tsx: displays current selected date in Traditional Chinese (e.g., 3月14日 星期五), with left/right arrow buttons for previous/next day; navigates by updating ?date= search param via router.push; clamp navigation range to today through 7 days forward (HKT) — disable backward arrow on today, disable forward arrow at +7 days; touch targets ≥44×44px; no horizontal scrolling on mobile
 - [ ] T020 [US2] Integrate DateNavigator into the schedule page layout in src/app/page.tsx: render DateNavigator above MatchList, pass current date as prop
 
-**Checkpoint**: Date navigation works. Users can browse forward 30 days and backward 7 days from today.
+**Checkpoint**: Date navigation works. Users can browse today through 7 days forward. Backward arrow disabled on today; forward arrow disabled at +7 days.
 
 ---
 
@@ -136,6 +136,7 @@
 - [ ] T032 [P] Responsive CSS polish across all components: verify layout at 375px (iPhone SE) and 1440px (desktop); ensure touch targets ≥44×44px; verify no horizontal scrolling on any filter or navigation control
 - [ ] T033 [P] Add staleness flagging in MatchCard: if match.lastUpdated is older than STALENESS_THRESHOLD_DAYS env var (default 7), show a subtle stale indicator alongside the match entry
 - [ ] T034 Validate quickstart.md end-to-end: follow all steps from a clean checkout, verify dev server runs, seed data loads, schedule page renders, date navigation works, filters work, revalidation endpoint responds
+- [ ] T035 [P] Run Lighthouse mobile audit (Slow 4G throttling, Moto G Power device class) against deployed Vercel preview; verify LCP < 1s per FR-013 and SC-001; document result in PR
 
 ---
 
@@ -216,4 +217,4 @@ Task: "Create schedule page in src/app/page.tsx"
 - Each user story is independently completable and testable after Foundational phase
 - Commit after each task or logical group
 - Stop at any checkpoint to validate story independently
-- Total: 34 tasks across 8 phases
+- Total: 35 tasks across 8 phases

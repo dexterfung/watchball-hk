@@ -138,7 +138,7 @@ A regular viewer wants quick access without opening a browser every time. They i
 
 - **SC-001**: The schedule page fully loads and is interactive in under 1 second on a mid-range mobile device on a 4G connection
 - **SC-002**: Users can identify what football is on TV today within 5 seconds of opening the page, with no interaction required
-- **SC-003**: All filter controls (date, competition, team) are accessible and operable on a 390px-wide mobile screen without horizontal scrolling
+- **SC-003**: All filter controls (date, competition, team) are accessible and operable on a 375px-wide mobile screen (iPhone SE) without horizontal scrolling
 - **SC-004**: Matches with missing broadcaster data are never hidden — 100% of known matches appear in the listing regardless of data completeness
 - **SC-005**: The PWA is successfully installable to the home screen on both iOS (Safari) and Android (Chrome)
 - **SC-006**: A user who previously loaded the schedule can view the cached content offline with no network connection
@@ -146,7 +146,7 @@ A regular viewer wants quick access without opening a browser every time. They i
 
 ## Assumptions
 
-- **Schedule date range**: Matches are browsable up to 30 days in advance and up to 7 days in the past. Matches older than 7 days are not required.
+- **Schedule date range**: Matches are browsable from today (HKT) up to 7 days in advance. Past dates are not navigable. The range can be extended if broadcasters begin confirming schedules further ahead.
 - **Data management**: Schedule data is managed externally (e.g., by an admin or data pipeline). This spec covers only the public-facing read-only view.
 - **Filter scope**: Filters apply only within the selected date — competition and team filters do not span multiple dates simultaneously.
 - **HKT display**: All times are displayed as HKT (UTC+8) explicitly, regardless of the viewer's device timezone.
