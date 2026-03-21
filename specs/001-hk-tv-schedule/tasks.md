@@ -19,11 +19,11 @@
 
 **Purpose**: Project initialization, dependencies, and tooling
 
-- [ ] T001 Initialize Next.js 15 project with App Router, TypeScript, pnpm, and ESLint in repository root
-- [ ] T002 Install core dependencies: @supabase/supabase-js, @supabase/ssr, @serwist/next, @serwist/precaching, @serwist/sw
-- [ ] T003 [P] Create .env.local.example with NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, REVALIDATION_SECRET placeholders
-- [ ] T004 [P] Configure Vitest in vitest.config.ts and Playwright in playwright.config.ts with pnpm test and pnpm test:e2e scripts in package.json
-- [ ] T005 [P] Add --webpack flag to build script in package.json (required for Serwist with Next.js 16+ Turbopack default)
+- [x] T001 Initialize Next.js 15 project with App Router, TypeScript, pnpm, and ESLint in repository root
+- [x] T002 Install core dependencies: @supabase/supabase-js, @supabase/ssr, @serwist/next, @serwist/precaching, @serwist/sw
+- [x] T003 [P] Create .env.local.example with NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY, REVALIDATION_SECRET placeholders
+- [x] T004 [P] Configure Vitest in vitest.config.ts and Playwright in playwright.config.ts with pnpm test and pnpm test:e2e scripts in package.json
+- [x] T005 [P] Add --webpack flag to build script in package.json (N/A — Next.js 15 uses Webpack by default; flag only needed for 16+)
 
 ---
 
@@ -33,13 +33,13 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T006 Create database migration in supabase/migrations/001_initial_schema.sql with all 5 tables (competitions, teams, broadcasters, matches, match_broadcasters), indexes, constraints, and RLS read policies per data-model.md
-- [ ] T007 Create seed data script in supabase/seed.sql with HK competitions (英超, 西甲, 意甲, 德甲, 法甲, 歐冠, 歐霸, etc.), broadcasters (Now TV, Now E, ViuTV, ESPN, beIN Sports, etc.), and sample matches for testing
-- [ ] T008 [P] Create Supabase server client helper in src/lib/supabase/server.ts using createClient with anon key for Server Component data fetching
-- [ ] T009 [P] Create shared TypeScript types in src/lib/types.ts matching the SchedulePageData, MatchEntry, TeamInfo, CompetitionInfo, BroadcasterInfo, and FilterOption interfaces from contracts/api.md
-- [ ] T010 [P] Create HKT date utility functions in src/lib/date.ts: formatTimeHKT (UTC→HKT display), formatDateHKT (date display), getHKTDateRange (selected HKT date→UTC start/end for Supabase query), getTodayHKT (current date in HKT)
-- [ ] T011 Create schedule data fetching function in src/lib/schedule.ts: fetchScheduleByDate(date: string) that queries Supabase for matches within the HKT date range, joins home_team, away_team, competition, and broadcasters, orders by kick_off_utc ascending, and returns SchedulePageData shape
-- [ ] T012 Create revalidation API route in src/app/api/revalidate/route.ts: POST handler that validates REVALIDATION_SECRET, calls revalidatePath('/'), and returns JSON response per contracts/api.md
+- [x] T006 Create database migration in supabase/migrations/001_initial_schema.sql with all 5 tables (competitions, teams, broadcasters, matches, match_broadcasters), indexes, constraints, and RLS read policies per data-model.md
+- [x] T007 Create seed data script in supabase/seed.sql with HK competitions (英超, 西甲, 意甲, 德甲, 法甲, 歐冠, 歐霸, etc.), broadcasters (Now TV, Now E, ViuTV, ESPN, beIN Sports, etc.), and sample matches for testing
+- [x] T008 [P] Create Supabase server client helper in src/lib/supabase/server.ts using createClient with anon key for Server Component data fetching
+- [x] T009 [P] Create shared TypeScript types in src/lib/types.ts matching the SchedulePageData, MatchEntry, TeamInfo, CompetitionInfo, BroadcasterInfo, and FilterOption interfaces from contracts/api.md
+- [x] T010 [P] Create HKT date utility functions in src/lib/date.ts: formatTimeHKT (UTC→HKT display), formatDateHKT (date display), getHKTDateRange (selected HKT date→UTC start/end for Supabase query), getTodayHKT (current date in HKT)
+- [x] T011 Create schedule data fetching function in src/lib/schedule.ts: fetchScheduleByDate(date: string) that queries Supabase for matches within the HKT date range, joins home_team, away_team, competition, and broadcasters, orders by kick_off_utc ascending, and returns SchedulePageData shape
+- [x] T012 Create revalidation API route in src/app/api/revalidate/route.ts: POST handler that validates REVALIDATION_SECRET, calls revalidatePath('/'), and returns JSON response per contracts/api.md
 
 **Checkpoint**: Database ready, Supabase connected, data fetching works, revalidation endpoint live
 
@@ -53,12 +53,12 @@
 
 ### Implementation for User Story 1
 
-- [ ] T013 [P] [US1] Create MatchCard component in src/components/schedule/MatchCard.tsx: displays kick-off time (HKT), home vs away team (nameZh primary, nameEn secondary), competition (nameZh primary, nameEn secondary), broadcaster name(s), and confidence badge; shows 待定 fallback when broadcasters array is empty
-- [ ] T014 [P] [US1] Create ConfidenceBadge component in src/components/schedule/ConfidenceBadge.tsx: renders 待確認 badge for confidence values 'unconfirmed' or 'estimated'; renders nothing for 'confirmed'
-- [ ] T015 [P] [US1] Create EmptyState component in src/components/schedule/EmptyState.tsx: displays a Traditional Chinese message (今日暫無賽事直播) when no matches are available; accepts optional custom message and clear-filters action
-- [ ] T016 [US1] Create MatchList client component in src/components/schedule/MatchList.tsx: receives MatchEntry[] as props, renders MatchCard for each match ordered by kick-off time; shows EmptyState when array is empty
-- [ ] T017 [US1] Create root layout in src/app/layout.tsx: set lang="zh-Hant-HK", add Traditional Chinese metadata (title: 香港足球電視直播時間表), import fonts, add viewport meta for mobile
-- [ ] T018 [US1] Create schedule page in src/app/page.tsx: Server Component that reads searchParams.date (defaults to getTodayHKT()), calls fetchScheduleByDate(), passes SchedulePageData to MatchList client component; configure ISR with revalidate: false (on-demand only)
+- [x] T013 [P] [US1] Create MatchCard component in src/components/schedule/MatchCard.tsx: displays kick-off time (HKT), home vs away team (nameZh primary, nameEn secondary), competition (nameZh primary, nameEn secondary), broadcaster name(s), and confidence badge; shows 待定 fallback when broadcasters array is empty
+- [x] T014 [P] [US1] Create ConfidenceBadge component in src/components/schedule/ConfidenceBadge.tsx: renders 待確認 badge for confidence values 'unconfirmed' or 'estimated'; renders nothing for 'confirmed'
+- [x] T015 [P] [US1] Create EmptyState component in src/components/schedule/EmptyState.tsx: displays a Traditional Chinese message (今日暫無賽事直播) when no matches are available; accepts optional custom message and clear-filters action
+- [x] T016 [US1] Create MatchList client component in src/components/schedule/MatchList.tsx: receives MatchEntry[] as props, renders MatchCard for each match ordered by kick-off time; shows EmptyState when array is empty
+- [x] T017 [US1] Create root layout in src/app/layout.tsx: set lang="zh-Hant-HK", add Traditional Chinese metadata (title: 香港足球電視直播時間表), import fonts, add viewport meta for mobile
+- [x] T018 [US1] Create schedule page in src/app/page.tsx: Server Component that reads searchParams.date (defaults to getTodayHKT()), calls fetchScheduleByDate(), passes SchedulePageData to MatchList client component; configure ISR with revalidate: false (on-demand only)
 
 **Checkpoint**: MVP complete — today's schedule renders with all data fields, fallbacks, and confidence badges. Independently testable and deployable.
 
@@ -72,8 +72,8 @@
 
 ### Implementation for User Story 2
 
-- [ ] T019 [US2] Create DateNavigator component in src/components/schedule/DateNavigator.tsx: displays current selected date in Traditional Chinese (e.g., 3月14日 星期五), with left/right arrow buttons for previous/next day; navigates by updating ?date= search param via router.push; clamp navigation range to today through 7 days forward (HKT) — disable backward arrow on today, disable forward arrow at +7 days; touch targets ≥44×44px; no horizontal scrolling on mobile
-- [ ] T020 [US2] Integrate DateNavigator into the schedule page layout in src/app/page.tsx: render DateNavigator above MatchList, pass current date as prop
+- [x] T019 [US2] Create DateNavigator component in src/components/schedule/DateNavigator.tsx: displays current selected date in Traditional Chinese (e.g., 3月14日 星期五), with left/right arrow buttons for previous/next day; navigates by updating ?date= search param via router.push; clamp navigation range to today through 7 days forward (HKT) — disable backward arrow on today, disable forward arrow at +7 days; touch targets ≥44×44px; no horizontal scrolling on mobile
+- [x] T020 [US2] Integrate DateNavigator into the schedule page layout in src/app/page.tsx: render DateNavigator above MatchList, pass current date as prop
 
 **Checkpoint**: Date navigation works. Users can browse today through 7 days forward. Backward arrow disabled on today; forward arrow disabled at +7 days.
 
@@ -87,9 +87,9 @@
 
 ### Implementation for User Story 3
 
-- [ ] T021 [P] [US3] Create FilterBar component in src/components/schedule/FilterBar.tsx: renders competition and team filter dropdowns using native <select> elements (mobile-friendly, no horizontal scroll); derives options from the matches on the current date; includes a "清除篩選" (clear filters) action; all labels in Traditional Chinese
-- [ ] T022 [US3] Add client-side filtering logic to MatchList in src/components/schedule/MatchList.tsx: accept activeCompetitionId and activeTeamId filter state; filter matches by AND logic (match must satisfy all active filters); show EmptyState with clear-filters action when filters yield no results
-- [ ] T023 [US3] Integrate FilterBar into the schedule page layout in src/app/page.tsx: pass filters.competitions and filters.teams from SchedulePageData as options; wire filter state between FilterBar and MatchList via React useState in a shared client wrapper
+- [x] T021 [P] [US3] Create FilterBar component in src/components/schedule/FilterBar.tsx: renders competition and team filter dropdowns using native <select> elements (mobile-friendly, no horizontal scroll); derives options from the matches on the current date; includes a "清除篩選" (clear filters) action; all labels in Traditional Chinese
+- [x] T022 [US3] Add client-side filtering logic to MatchList in src/components/schedule/MatchList.tsx: accept activeCompetitionId and activeTeamId filter state; filter matches by AND logic (match must satisfy all active filters); show EmptyState with clear-filters action when filters yield no results
+- [x] T023 [US3] Integrate FilterBar into the schedule page layout in src/app/page.tsx: pass filters.competitions and filters.teams from SchedulePageData as options; wire filter state between FilterBar and MatchList via React useState in a shared client wrapper
 
 **Checkpoint**: Filters work on mobile without horizontal scrolling. AND logic correct. Empty filtered state shows clear option.
 
@@ -103,10 +103,10 @@
 
 ### Implementation for User Story 4
 
-- [ ] T024 [US4] Create Serwist service worker in src/sw.ts: configure precaching for app shell (HTML, CSS, JS, fonts, icons); add NetworkFirst runtime caching for schedule page navigations; add CacheFirst for static assets (_next/static/*)
-- [ ] T025 [US4] Configure @serwist/next in next.config.ts: set swSrc to src/sw.ts, swDest to public/sw.js, enable cacheOnNavigation and reloadOnOnline in production only
-- [ ] T026 [US4] Create OfflineBanner component in src/components/schedule/OfflineBanner.tsx: listens to navigator.onLine events; when offline, displays a Traditional Chinese banner (離線模式 — 顯示最近緩存資料) at the top of the page; auto-hides when connection restores
-- [ ] T027 [US4] Add OfflineBanner to root layout in src/app/layout.tsx: render above main content area so it appears globally when offline
+- [x] T024 [US4] Create Serwist service worker in src/sw.ts: configure precaching for app shell (HTML, CSS, JS, fonts, icons); add NetworkFirst runtime caching for schedule page navigations; add CacheFirst for static assets (_next/static/*)
+- [x] T025 [US4] Configure @serwist/next in next.config.ts: set swSrc to src/sw.ts, swDest to public/sw.js, enable cacheOnNavigation and reloadOnOnline in production only
+- [x] T026 [US4] Create OfflineBanner component in src/components/schedule/OfflineBanner.tsx: listens to navigator.onLine events; when offline, displays a Traditional Chinese banner (離線模式 — 顯示最近緩存資料) at the top of the page; auto-hides when connection restores
+- [x] T027 [US4] Add OfflineBanner to root layout in src/app/layout.tsx: render above main content area so it appears globally when offline
 
 **Checkpoint**: Offline viewing works after prior online visit. Banner indicates offline status. Schedule data served from service worker cache.
 
@@ -120,9 +120,9 @@
 
 ### Implementation for User Story 5
 
-- [ ] T028 [P] [US5] Create PWA manifest in src/app/manifest.ts: name "WatchBall HK 香港足球直播表", short_name "WatchBall", display "standalone", theme_color, background_color, start_url "/", icons (192x192 and 512x512)
-- [ ] T029 [P] [US5] Create PWA icons in src/public/icons/: generate icon-192x192.png and icon-512x512.png with WatchBall HK branding
-- [ ] T030 [US5] Add Apple PWA meta tags to root layout in src/app/layout.tsx: apple-mobile-web-app-capable, apple-mobile-web-app-status-bar-style, apple-touch-icon link
+- [x] T028 [P] [US5] Create PWA manifest in src/app/manifest.ts: name "WatchBall HK 香港足球直播表", short_name "WatchBall", display "standalone", theme_color, background_color, start_url "/", icons (192x192 and 512x512)
+- [x] T029 [P] [US5] Create PWA icons in src/public/icons/: generate icon-192x192.png and icon-512x512.png with WatchBall HK branding
+- [x] T030 [US5] Add Apple PWA meta tags to root layout in src/app/layout.tsx: apple-mobile-web-app-capable, apple-mobile-web-app-status-bar-style, apple-touch-icon link
 
 **Checkpoint**: PWA installable on both platforms. Launches in standalone mode from home screen.
 
@@ -132,11 +132,11 @@
 
 **Purpose**: Responsive refinement, performance, error handling
 
-- [ ] T031 Add error boundary and loading state to src/app/page.tsx: show Traditional Chinese error message (無法載入賽程資料) when Supabase fetch fails and no cache exists; add loading skeleton for ISR regeneration
-- [ ] T032 [P] Responsive CSS polish across all components: verify layout at 375px (iPhone SE) and 1440px (desktop); ensure touch targets ≥44×44px; verify no horizontal scrolling on any filter or navigation control
-- [ ] T033 [P] Add staleness flagging in MatchCard: if match.lastUpdated is older than STALENESS_THRESHOLD_DAYS env var (default 7), show a subtle stale indicator alongside the match entry
-- [ ] T034 Validate quickstart.md end-to-end: follow all steps from a clean checkout, verify dev server runs, seed data loads, schedule page renders, date navigation works, filters work, revalidation endpoint responds
-- [ ] T035 [P] Run Lighthouse mobile audit (Slow 4G throttling, Moto G Power device class) against deployed Vercel preview; verify LCP < 1s per FR-013 and SC-001; document result in PR
+- [x] T031 Add error boundary and loading state to src/app/page.tsx: show Traditional Chinese error message (無法載入賽程資料) when Supabase fetch fails and no cache exists; add loading skeleton for ISR regeneration
+- [x] T032 [P] Responsive CSS polish across all components: verify layout at 375px (iPhone SE) and 1440px (desktop); ensure touch targets ≥44×44px; verify no horizontal scrolling on any filter or navigation control
+- [x] T033 [P] Add staleness flagging in MatchCard: if match.lastUpdated is older than STALENESS_THRESHOLD_DAYS env var (default 7), show a subtle stale indicator alongside the match entry
+- [x] T034 Validate quickstart.md end-to-end: follow all steps from a clean checkout, verify dev server runs, seed data loads, schedule page renders, date navigation works, filters work, revalidation endpoint responds
+- [x] T035 [P] Run Lighthouse mobile audit (Slow 4G throttling, Moto G Power device class) against deployed Vercel preview; verify LCP < 1s per FR-013 and SC-001; document result in PR
 
 ---
 
