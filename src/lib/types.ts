@@ -34,6 +34,12 @@ export interface BroadcasterInfo {
   id: string;
   name: string;
   type: "tv" | "ott";
+  channel?: string | null;
+}
+
+export interface BroadcasterSelection {
+  broadcasterId: string;
+  channel?: string;
 }
 
 export interface FilterOption {
@@ -51,7 +57,7 @@ export interface CreateMatchInput {
   homeTeamId: string;
   awayTeamId: string;
   competitionId: string;
-  broadcasterIds: string[]; // May be empty
+  broadcasters: BroadcasterSelection[]; // May be empty
   confidence: "confirmed" | "unconfirmed" | "estimated";
 }
 
@@ -72,7 +78,7 @@ export interface UpdateMatchInput {
   homeTeamId?: string;
   awayTeamId?: string;
   competitionId?: string;
-  broadcasterIds?: string[]; // Full replacement (not additive)
+  broadcasters?: BroadcasterSelection[]; // Full replacement (not additive)
   confidence?: "confirmed" | "unconfirmed" | "estimated";
 }
 

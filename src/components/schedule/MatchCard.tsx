@@ -65,7 +65,7 @@ export function MatchCard({ match }: MatchCardProps) {
                   key={b.id}
                   className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700"
                 >
-                  {b.name}
+                  {b.name}{b.channel && ` ${b.channel}`}
                 </span>
               ))
             ) : (

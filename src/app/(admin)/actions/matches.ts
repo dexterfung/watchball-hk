@@ -81,13 +81,14 @@ export async function createMatch(
   }
 
   // Insert broadcaster links
-  if (input.broadcasterIds.length > 0) {
+  if (input.broadcasters.length > 0) {
     const { error: bcError } = await supabase
       .from("match_broadcasters")
       .insert(
-        input.broadcasterIds.map((bid) => ({
+        input.broadcasters.map((b) => ({
           match_id: match.id,
-          broadcaster_id: bid,
+          broadcaster_id: b.broadcasterId,
+          channel: b.channel || null,
         })),
       );
 
@@ -139,19 +140,20 @@ export async function updateMatch(
   }
 
   // Replace broadcasters if provided
-  if (input.broadcasterIds !== undefined) {
+  if (input.broadcasters !== undefined) {
     await supabase
       .from("match_broadcasters")
       .delete()
       .eq("match_id", input.matchId);
 
-    if (input.broadcasterIds.length > 0) {
+    if (input.broadcasters.length > 0) {
       const { error: bcError } = await supabase
         .from("match_broadcasters")
         .insert(
-          input.broadcasterIds.map((bid) => ({
+          input.broadcasters.map((b) => ({
             match_id: input.matchId,
-            broadcaster_id: bid,
+            broadcaster_id: b.broadcasterId,
+            channel: b.channel || null,
           })),
         );
 

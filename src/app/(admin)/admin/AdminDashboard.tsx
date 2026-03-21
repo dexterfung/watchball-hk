@@ -54,6 +54,7 @@ export function AdminDashboard({
   const broadcasterOptions = referenceData.broadcasters.map((b) => ({
     id: b.id,
     label: `${b.name} (${b.type.toUpperCase()})`,
+    type: b.type,
   }));
 
   const handleSubmit = useCallback(
@@ -68,7 +69,7 @@ export function AdminDashboard({
           homeTeamId: data.homeTeamId,
           awayTeamId: data.awayTeamId,
           competitionId: data.competitionId,
-          broadcasterIds: data.broadcasterIds,
+          broadcasters: data.broadcasters,
           confidence: data.confidence,
         };
         const result = await updateMatch(updateInput);
@@ -123,7 +124,10 @@ export function AdminDashboard({
       homeTeamId: match.homeTeam.id,
       awayTeamId: match.awayTeam.id,
       competitionId: match.competition.id,
-      broadcasterIds: match.broadcasters.map((b) => b.id),
+      broadcasters: match.broadcasters.map((b) => ({
+        broadcasterId: b.id,
+        channel: b.channel ?? undefined,
+      })),
       confidence: match.confidence,
     });
     setFormKey((k) => k + 1);
@@ -140,7 +144,7 @@ export function AdminDashboard({
           kickOffDate: data.kickOffDate,
           kickOffTime: data.kickOffTime,
           competitionId: data.competitionId,
-          broadcasterIds: data.broadcasterIds,
+          broadcasters: data.broadcasters,
           homeTeamId: "",
           awayTeamId: "",
           confidence: "confirmed",

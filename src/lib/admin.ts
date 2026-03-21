@@ -43,6 +43,7 @@ export async function fetchAdminMatches(
       away_team:teams!away_team_id(id, name_zh, name_en),
       competition:competitions!competition_id(id, name_zh, name_en),
       match_broadcasters(
+        channel,
         broadcaster:broadcasters(id, name, type)
       )
     `,
@@ -73,9 +74,13 @@ export async function fetchAdminMatches(
     };
     const broadcasters = (
       m.match_broadcasters as unknown as Array<{
+        channel: string | null;
         broadcaster: { id: string; name: string; type: "tv" | "ott" };
       }>
-    ).map((mb) => mb.broadcaster);
+    ).map((mb) => ({
+      ...mb.broadcaster,
+      channel: mb.channel,
+    }));
 
     return {
       id: m.id,
@@ -166,7 +171,7 @@ export async function getCopyForwardData(matchId: string) {
       `
       kick_off_utc,
       competition_id,
-      match_broadcasters(broadcaster_id)
+      match_broadcasters(broadcaster_id, channel)
     `,
     )
     .eq("id", matchId)
@@ -185,10 +190,14 @@ export async function getCopyForwardData(matchId: string) {
     kickOffDate: newDateHKT.slice(0, 10), // YYYY-MM-DD
     kickOffTime: sourceHKT.slice(11, 16), // HH:MM (keep original time)
     competitionId: data.competition_id,
-    broadcasterIds: (
+    broadcasters: (
       data.match_broadcasters as unknown as Array<{
         broadcaster_id: string;
+        channel: string | null;
       }>
-    ).map((mb) => mb.broadcaster_id),
+    ).map((mb) => ({
+      broadcasterId: mb.broadcaster_id,
+      channel: mb.channel ?? undefined,
+    })),
   };
 }

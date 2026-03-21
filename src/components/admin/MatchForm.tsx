@@ -2,7 +2,7 @@
 
 import { useForm, Controller } from "react-hook-form";
 import { SearchableCombobox } from "./SearchableCombobox";
-import { MultiSelectCombobox } from "./MultiSelectCombobox";
+import { BroadcasterPicker } from "./BroadcasterPicker";
 import { ConfidenceSelect } from "./ConfidenceSelect";
 import { DateTimePicker } from "./DateTimePicker";
 import { getTodayHKT } from "@/lib/date";
@@ -13,10 +13,16 @@ interface Option {
   label: string;
 }
 
+interface BroadcasterOption {
+  id: string;
+  label: string;
+  type: "tv" | "ott";
+}
+
 interface MatchFormProps {
   teams: Option[];
   competitions: Option[];
-  broadcasters: Option[];
+  broadcasters: BroadcasterOption[];
   initialValues?: Partial<CreateMatchInput>;
   onSubmit: (data: CreateMatchInput) => Promise<{
     success: boolean;
@@ -42,7 +48,7 @@ export function MatchForm({
         homeTeamId: initialValues?.homeTeamId ?? "",
         awayTeamId: initialValues?.awayTeamId ?? "",
         competitionId: initialValues?.competitionId ?? "",
-        broadcasterIds: initialValues?.broadcasterIds ?? [],
+        broadcasters: initialValues?.broadcasters ?? [],
         confidence: initialValues?.confidence ?? "confirmed",
       },
     });
@@ -56,7 +62,7 @@ export function MatchForm({
         homeTeamId: "",
         awayTeamId: "",
         competitionId: "",
-        broadcasterIds: [],
+        broadcasters: [],
         confidence: "confirmed",
       });
     }
@@ -129,15 +135,13 @@ export function MatchForm({
       />
 
       <Controller
-        name="broadcasterIds"
+        name="broadcasters"
         control={control}
         render={({ field }) => (
-          <MultiSelectCombobox
-            label="Broadcasters"
+          <BroadcasterPicker
             options={broadcasters}
             value={field.value}
             onChange={field.onChange}
-            placeholder="Search broadcasters…"
           />
         )}
       />
