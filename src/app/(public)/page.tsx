@@ -3,8 +3,7 @@ import { fetchScheduleByDate } from "@/lib/schedule";
 import { MatchList } from "@/components/schedule/MatchList";
 import { DateNavigator } from "@/components/schedule/DateNavigator";
 
-// On-demand revalidation only (no time-based)
-export const revalidate = false;
+export const dynamic = "force-dynamic";
 
 interface PageProps {
   searchParams: Promise<{ date?: string }>;

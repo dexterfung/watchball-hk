@@ -8,12 +8,12 @@ export default async function AdminPage() {
   const today = getTodayHKT();
   // Default: show today + next 7 days
   const endDate = (() => {
-    const d = new Date(today + "T00:00:00+08:00");
-    d.setDate(d.getDate() + 7);
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    return `${y}-${m}-${day}`;
+    const [y, m, d] = today.split("-").map(Number);
+    const date = new Date(Date.UTC(y, m - 1, d + 7));
+    const ry = date.getUTCFullYear();
+    const rm = String(date.getUTCMonth() + 1).padStart(2, "0");
+    const rd = String(date.getUTCDate()).padStart(2, "0");
+    return `${ry}-${rm}-${rd}`;
   })();
 
   const [referenceData, matches] = await Promise.all([

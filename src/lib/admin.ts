@@ -178,7 +178,7 @@ export async function getCopyForwardData(matchId: string) {
 
   const sourceHKT = toHKTISOString(data.kick_off_utc);
   const sourceDate = new Date(data.kick_off_utc);
-  sourceDate.setDate(sourceDate.getDate() + 7);
+  sourceDate.setUTCDate(sourceDate.getUTCDate() + 7);
   const newDateHKT = toHKTISOString(sourceDate.toISOString());
 
   return {
