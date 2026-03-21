@@ -35,11 +35,17 @@ export function MatchCard({ match }: MatchCardProps) {
         {/* Match details */}
         <div className="min-w-0 flex-1">
           {/* Teams */}
-          <div className="flex flex-col gap-0.5">
-            <TeamName team={match.homeTeam} />
-            <span className="text-xs text-gray-400">vs</span>
-            <TeamName team={match.awayTeam} />
-          </div>
+          <p className="text-base font-medium text-gray-900">
+            {match.homeTeam.nameZh}
+            {match.homeTeam.nameEn && (
+              <span className="ml-1 text-xs font-normal text-gray-400">{match.homeTeam.nameEn}</span>
+            )}
+            <span className="mx-1.5 text-xs font-normal text-gray-400">vs</span>
+            {match.awayTeam.nameZh}
+            {match.awayTeam.nameEn && (
+              <span className="ml-1 text-xs font-normal text-gray-400">{match.awayTeam.nameEn}</span>
+            )}
+          </p>
 
           {/* Competition */}
           <p className="mt-1.5 text-sm text-gray-600">
@@ -84,15 +90,3 @@ export function MatchCard({ match }: MatchCardProps) {
   );
 }
 
-function TeamName({ team }: { team: MatchEntry["homeTeam"] }) {
-  return (
-    <p className="text-base font-medium text-gray-900">
-      {team.nameZh}
-      {team.nameEn && (
-        <span className="ml-1 text-xs font-normal text-gray-400">
-          {team.nameEn}
-        </span>
-      )}
-    </p>
-  );
-}
