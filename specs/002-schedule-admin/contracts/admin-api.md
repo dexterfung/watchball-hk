@@ -137,6 +137,29 @@ interface CreateReferenceResult {
 }
 ```
 
+### deleteReferenceItem
+
+**Input**:
+```typescript
+interface DeleteReferenceInput {
+  type: 'competition' | 'team' | 'broadcaster';
+  id: string;                   // UUID
+}
+```
+
+**Output**:
+```typescript
+interface DeleteReferenceResult {
+  success: boolean;
+  error?: string;               // e.g., "Referenced by 3 matches"
+}
+```
+
+**Behaviour**:
+- Checks if the item is referenced by any match records before deleting
+- If referenced, returns error with count — does not delete
+- If unreferenced, deletes the row
+
 ## Auth Contract
 
 All server actions verify the user session before executing. If no valid session exists, they return `{ success: false, error: 'Unauthorized' }` with no mutation performed.
