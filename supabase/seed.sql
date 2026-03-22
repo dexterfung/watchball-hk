@@ -55,9 +55,9 @@ INSERT INTO teams (name_zh, name_en) VALUES
   ('韋斯咸', 'West Ham United'),
   ('熱刺', 'Tottenham Hotspur'),
   ('狼隊', 'Wolverhampton'),
-  ('伯恩茅斯', 'Bournemouth'),
-  ('般尼茅夫', 'Brentford'),
-  ('伊荈奇', 'Ipswich Town'),
+  ('般尼茅夫', 'Bournemouth'),
+  ('賓福特', 'Brentford'),
+  ('葉士域治', 'Ipswich Town'),
   ('李斯特城', 'Leicester City'),
   ('修咸頓', 'Southampton'),
   -- La Liga
@@ -73,7 +73,7 @@ INSERT INTO teams (name_zh, name_en) VALUES
   ('拜仁慕尼黑', 'Bayern Munich'),
   ('多蒙特', 'Borussia Dortmund'),
   -- Ligue 1
-  ('巴黎聖日耳曼', 'Paris Saint-Germain');
+  ('巴黎聖日耳門', 'Paris Saint-Germain');
 
 -- ============================================================
 -- SAMPLE MATCHES (for development/testing)

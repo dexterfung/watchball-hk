@@ -29,7 +29,7 @@ export function FilterBar({
           onChange={(e) =>
             onCompetitionChange(e.target.value || null)
           }
-          className="min-h-[44px] flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900"
+          className="min-h-[44px] flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
           aria-label="篩選賽事"
         >
           <option value="">所有賽事</option>
@@ -43,7 +43,7 @@ export function FilterBar({
         <select
           value={activeTeamId ?? ""}
           onChange={(e) => onTeamChange(e.target.value || null)}
-          className="min-h-[44px] flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900"
+          className="min-h-[44px] flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100"
           aria-label="篩選球隊"
         >
           <option value="">所有球隊</option>
@@ -61,7 +61,7 @@ export function FilterBar({
             onCompetitionChange(null);
             onTeamChange(null);
           }}
-          className="self-start text-xs text-blue-600 hover:text-blue-800 underline"
+          className="self-start text-xs text-blue-600 hover:text-blue-800 underline dark:text-blue-400 dark:hover:text-blue-300"
         >
           清除篩選
         </button>

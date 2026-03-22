@@ -9,11 +9,11 @@ export function EmptyState({
 }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center">
-      <p className="text-lg text-gray-500">{message}</p>
+      <p className="text-lg text-gray-500 dark:text-gray-400">{message}</p>
       {onClearFilters && (
         <button
           onClick={onClearFilters}
-          className="mt-4 text-sm text-blue-600 hover:text-blue-800 underline"
+          className="mt-4 text-sm text-blue-600 hover:text-blue-800 underline dark:text-blue-400 dark:hover:text-blue-300"
         >
           清除篩選
         </button>

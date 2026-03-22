@@ -27,13 +27,13 @@ export function DateNavigator({ currentDate }: DateNavigatorProps) {
 
   return (
     <nav
-      className="flex items-center justify-between gap-2 rounded-lg bg-white p-3 shadow-sm border border-gray-200"
+      className="flex items-center justify-between gap-2 rounded-lg bg-white p-3 shadow-sm border border-gray-200 dark:border-gray-700 dark:bg-gray-800"
       aria-label="日期導航"
     >
       {isAtStart ? (
         <span
           aria-disabled="true"
-          className="flex h-11 w-11 items-center justify-center rounded-lg text-lg font-bold text-gray-700 opacity-30 cursor-not-allowed"
+          className="flex h-11 w-11 items-center justify-center rounded-lg text-lg font-bold text-gray-700 dark:text-gray-300 opacity-30 cursor-not-allowed"
         >
           ‹
         </span>
@@ -41,14 +41,14 @@ export function DateNavigator({ currentDate }: DateNavigatorProps) {
         <a
           href={`/?date=${prevDate}`}
           aria-label="前一日"
-          className="flex h-11 w-11 items-center justify-center rounded-lg text-lg font-bold text-gray-700 hover:bg-gray-100"
+          className="flex h-11 w-11 items-center justify-center rounded-lg text-lg font-bold text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
         >
           ‹
         </a>
       )}
 
       <div className="text-center">
-        <p className="text-base font-semibold text-gray-900">
+        <p className="text-base font-semibold text-gray-900 dark:text-gray-100">
           {formatDateHKT(currentDate)}
         </p>
         {currentDate === today && (
@@ -59,7 +59,7 @@ export function DateNavigator({ currentDate }: DateNavigatorProps) {
       {isAtEnd ? (
         <span
           aria-disabled="true"
-          className="flex h-11 w-11 items-center justify-center rounded-lg text-lg font-bold text-gray-700 opacity-30 cursor-not-allowed"
+          className="flex h-11 w-11 items-center justify-center rounded-lg text-lg font-bold text-gray-700 dark:text-gray-300 opacity-30 cursor-not-allowed"
         >
           ›
         </span>
@@ -67,7 +67,7 @@ export function DateNavigator({ currentDate }: DateNavigatorProps) {
         <a
           href={`/?date=${nextDate}`}
           aria-label="後一日"
-          className="flex h-11 w-11 items-center justify-center rounded-lg text-lg font-bold text-gray-700 hover:bg-gray-100"
+          className="flex h-11 w-11 items-center justify-center rounded-lg text-lg font-bold text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
         >
           ›
         </a>

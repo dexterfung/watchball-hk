@@ -22,36 +22,36 @@ export function MatchCard({ match }: MatchCardProps) {
   const stale = isStale(match.lastUpdated);
 
   return (
-    <article className={`rounded-lg border p-4 shadow-sm ${stale ? "border-orange-200 bg-orange-50/50" : "border-gray-200 bg-white"}`}>
+    <article className={`rounded-lg border p-4 shadow-sm ${stale ? "border-orange-200 bg-orange-50/50 dark:border-orange-800 dark:bg-orange-950/50" : "border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800"}`}>
       <div className="flex items-start gap-3">
         {/* Kick-off time */}
         <div className="flex-shrink-0 text-center">
-          <time className="text-xl font-bold tabular-nums text-gray-900">
+          <time className="text-xl font-bold tabular-nums text-gray-900 dark:text-gray-100">
             {time}
           </time>
-          <p className="text-xs text-gray-500">HKT</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">HKT</p>
         </div>
 
         {/* Match details */}
         <div className="min-w-0 flex-1">
           {/* Teams */}
-          <p className="text-base font-medium text-gray-900">
+          <p className="text-base font-medium text-gray-900 dark:text-gray-100">
             {match.homeTeam.nameZh}
             {match.homeTeam.nameEn && (
-              <span className="ml-1 text-xs font-normal text-gray-400">{match.homeTeam.nameEn}</span>
+              <span className="ml-1 text-xs font-normal text-gray-400 dark:text-gray-500">{match.homeTeam.nameEn}</span>
             )}
-            <span className="mx-1.5 text-xs font-normal text-gray-400">vs</span>
+            <span className="mx-1.5 text-xs font-normal text-gray-400 dark:text-gray-500">vs</span>
             {match.awayTeam.nameZh}
             {match.awayTeam.nameEn && (
-              <span className="ml-1 text-xs font-normal text-gray-400">{match.awayTeam.nameEn}</span>
+              <span className="ml-1 text-xs font-normal text-gray-400 dark:text-gray-500">{match.awayTeam.nameEn}</span>
             )}
           </p>
 
           {/* Competition */}
-          <p className="mt-1.5 text-sm text-gray-600">
+          <p className="mt-1.5 text-sm text-gray-600 dark:text-gray-400">
             {match.competition.nameZh}
             {match.competition.nameEn && (
-              <span className="ml-1 text-xs text-gray-400">
+              <span className="ml-1 text-xs text-gray-400 dark:text-gray-500">
                 {match.competition.nameEn}
               </span>
             )}
@@ -63,13 +63,13 @@ export function MatchCard({ match }: MatchCardProps) {
               match.broadcasters.map((b) => (
                 <span
                   key={b.id}
-                  className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700"
+                  className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/50 dark:text-blue-300"
                 >
                   {b.name}{b.channel && ` ${b.channel}`}
                 </span>
               ))
             ) : (
-              <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs text-gray-500">
+              <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs text-gray-500 dark:bg-gray-700 dark:text-gray-400">
                 待定
               </span>
             )}
@@ -79,7 +79,7 @@ export function MatchCard({ match }: MatchCardProps) {
           <div className="mt-1.5 flex flex-wrap gap-1.5">
             <ConfidenceBadge confidence={match.confidence} />
             {stale && (
-              <span className="inline-flex items-center rounded-md bg-orange-50 px-2 py-0.5 text-xs text-orange-600 ring-1 ring-orange-500/20 ring-inset">
+              <span className="inline-flex items-center rounded-md bg-orange-50 px-2 py-0.5 text-xs text-orange-600 ring-1 ring-orange-500/20 ring-inset dark:bg-orange-950 dark:text-orange-400 dark:ring-orange-500/30">
                 資料可能過時
               </span>
             )}
