@@ -35,12 +35,14 @@ export interface BroadcasterInfo {
   id: string;
   name: string;
   type: "tv" | "ott";
-  channel?: string | null;
+  channel?: string | null; // Channel display name from broadcaster_channels
+  channelId?: string | null; // broadcaster_channels.id (for admin edit pre-fill)
+  rowKey: string; // match_broadcasters.id for unique React key
 }
 
 export interface BroadcasterSelection {
   broadcasterId: string;
-  channel?: string;
+  channelId?: string; // References broadcaster_channels.id
 }
 
 export interface FilterOption {
@@ -105,13 +107,14 @@ export interface InvalidationResult {
 }
 
 export interface CreateReferenceInput {
-  type: "competition" | "team" | "broadcaster";
+  type: "competition" | "team" | "broadcaster" | "broadcaster_channel";
   nameZh?: string;
   nameEn?: string;
   shortNameZh?: string; // Competition only
-  name?: string; // Required for broadcaster
+  name?: string; // Required for broadcaster and broadcaster_channel
   broadcasterType?: "tv" | "ott"; // Required for broadcaster
   sortOrder?: number;
+  broadcasterId?: string; // Required for broadcaster_channel
 }
 
 export interface CreateReferenceResult {
@@ -121,7 +124,7 @@ export interface CreateReferenceResult {
 }
 
 export interface UpdateReferenceInput {
-  type: "competition" | "team" | "broadcaster";
+  type: "competition" | "team" | "broadcaster" | "broadcaster_channel";
   id: string;
   nameZh?: string;
   nameEn?: string;
@@ -137,7 +140,7 @@ export interface UpdateReferenceResult {
 }
 
 export interface DeleteReferenceInput {
-  type: "competition" | "team" | "broadcaster";
+  type: "competition" | "team" | "broadcaster" | "broadcaster_channel";
   id: string;
 }
 

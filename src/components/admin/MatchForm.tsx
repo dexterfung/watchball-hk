@@ -17,6 +17,7 @@ interface BroadcasterOption {
   id: string;
   label: string;
   type: "tv" | "ott";
+  channels: Array<{ id: string; name: string }>;
 }
 
 interface MatchFormProps {

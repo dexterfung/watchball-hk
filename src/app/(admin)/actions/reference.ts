@@ -107,6 +107,26 @@ export async function createReferenceItem(
     return { success: true, item: { id: data.id } };
   }
 
+  if (input.type === "broadcaster_channel") {
+    const { data, error } = await supabase
+      .from("broadcaster_channels")
+      .insert({
+        broadcaster_id: input.broadcasterId!,
+        name: input.name!,
+        sort_order: input.sortOrder ?? 0,
+      })
+      .select("id")
+      .single();
+
+    if (error) {
+      if (error.code === "23505") {
+        return { success: false, error: "Duplicate channel name" };
+      }
+      return { success: false, error: error.message };
+    }
+    return { success: true, item: { id: data.id } };
+  }
+
   return { success: false, error: "Invalid type" };
 }
 
@@ -170,6 +190,23 @@ export async function updateReferenceItem(
     return { success: true };
   }
 
+  if (input.type === "broadcaster_channel") {
+    const updates: Record<string, unknown> = {};
+    if (input.name !== undefined) updates.name = input.name;
+    if (input.sortOrder !== undefined) updates.sort_order = input.sortOrder;
+
+    const { error } = await supabase
+      .from("broadcaster_channels")
+      .update(updates)
+      .eq("id", input.id);
+
+    if (error) {
+      if (error.code === "23505") return { success: false, error: "Duplicate channel name" };
+      return { success: false, error: error.message };
+    }
+    return { success: true };
+  }
+
   return { success: false, error: "Invalid type" };
 }
 
@@ -184,10 +221,23 @@ export async function deleteReferenceItem(
       ? "competitions"
       : input.type === "team"
         ? "teams"
-        : "broadcasters";
+        : input.type === "broadcaster_channel"
+          ? "broadcaster_channels"
+          : "broadcasters";
 
   // Check referential integrity
-  if (input.type === "competition") {
+  if (input.type === "broadcaster_channel") {
+    const { count } = await supabase
+      .from("match_broadcasters")
+      .select("id", { count: "exact", head: true })
+      .eq("broadcaster_channel_id", input.id);
+    if (count && count > 0) {
+      return {
+        success: false,
+        error: `Referenced by ${count} matches`,
+      };
+    }
+  } else if (input.type === "competition") {
     const { count } = await supabase
       .from("matches")
       .select("id", { count: "exact", head: true })

@@ -1,18 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import {
-  Combobox,
-  ComboboxInput,
-  ComboboxOption,
-  ComboboxOptions,
-} from "@headlessui/react";
 import type { BroadcasterSelection } from "@/lib/types";
+
+interface Channel {
+  id: string;
+  name: string;
+}
 
 interface Option {
   id: string;
   label: string;
   type: "tv" | "ott";
+  channels: Channel[];
 }
 
 interface BroadcasterPickerProps {
@@ -26,46 +25,27 @@ export function BroadcasterPicker({
   value,
   onChange,
 }: BroadcasterPickerProps) {
-  const [query, setQuery] = useState("");
+  function handleAdd() {
+    onChange([...value, { broadcasterId: "" }]);
+  }
 
-  const selectedIds = value.map((v) => v.broadcasterId);
+  function handleRemove(index: number) {
+    onChange(value.filter((_, i) => i !== index));
+  }
 
-  const filtered =
-    query === ""
-      ? options
-      : options.filter((opt) =>
-          opt.label.toLowerCase().includes(query.toLowerCase()),
-        );
-
-  function handleSelect(opts: Option[]) {
-    const newIds = opts.map((o) => o.id);
-    // Keep existing selections with their channels, add new ones
-    const updated: BroadcasterSelection[] = newIds.map((id) => {
-      const existing = value.find((v) => v.broadcasterId === id);
-      return existing ?? { broadcasterId: id };
-    });
+  function handleBroadcasterChange(index: number, broadcasterId: string) {
+    const updated = value.map((v, i) =>
+      i === index ? { broadcasterId, channelId: undefined } : v,
+    );
     onChange(updated);
   }
 
-  function handleRemove(id: string) {
-    onChange(value.filter((v) => v.broadcasterId !== id));
-  }
-
-  function handleChannelChange(broadcasterId: string, channel: string) {
-    onChange(
-      value.map((v) =>
-        v.broadcasterId === broadcasterId ? { ...v, channel } : v,
-      ),
+  function handleChannelChange(index: number, channelId: string) {
+    const updated = value.map((v, i) =>
+      i === index ? { ...v, channelId: channelId || undefined } : v,
     );
+    onChange(updated);
   }
-
-  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Backspace" && query === "" && value.length > 0) {
-      onChange(value.slice(0, -1));
-    }
-  }
-
-  const selectedOptions = options.filter((o) => selectedIds.includes(o.id));
 
   return (
     <div>
@@ -73,35 +53,54 @@ export function BroadcasterPicker({
         Broadcasters
       </label>
 
-      {/* Selected broadcasters with channel inputs */}
       {value.length > 0 && (
-        <div className="mb-2 space-y-1.5">
-          {value.map((sel) => {
+        <div className="mb-2 space-y-2">
+          {value.map((sel, index) => {
             const opt = options.find((o) => o.id === sel.broadcasterId);
-            if (!opt) return null;
+            const channels = opt?.channels ?? [];
+
             return (
               <div
-                key={sel.broadcasterId}
+                key={index}
                 className="flex items-center gap-2 rounded-md border border-gray-200 bg-gray-50 px-2 py-1.5"
               >
-                <span className="text-sm font-medium text-gray-800">
-                  {opt.label}
-                </span>
-                {opt.type === "tv" && (
-                  <input
-                    type="text"
-                    value={sel.channel ?? ""}
-                    onChange={(e) =>
-                      handleChannelChange(sel.broadcasterId, e.target.value)
-                    }
-                    placeholder="Channel #"
-                    className="w-24 rounded border border-gray-300 px-2 py-0.5 text-xs focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  />
+                {/* Broadcaster select */}
+                <select
+                  value={sel.broadcasterId}
+                  onChange={(e) =>
+                    handleBroadcasterChange(index, e.target.value)
+                  }
+                  className="flex-1 rounded border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                >
+                  <option value="">Select broadcaster…</option>
+                  {options.map((o) => (
+                    <option key={o.id} value={o.id}>
+                      {o.label}
+                    </option>
+                  ))}
+                </select>
+
+                {/* Channel select — show if broadcaster has channels */}
+                {opt && channels.length > 0 && (
+                  <select
+                    value={sel.channelId ?? ""}
+                    onChange={(e) => handleChannelChange(index, e.target.value)}
+                    className="w-32 rounded border border-gray-300 px-2 py-1 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  >
+                    <option value="">No channel</option>
+                    {channels.map((ch) => (
+                      <option key={ch.id} value={ch.id}>
+                        {ch.name}
+                      </option>
+                    ))}
+                  </select>
                 )}
+
+                {/* Remove button */}
                 <button
                   type="button"
-                  onClick={() => handleRemove(sel.broadcasterId)}
-                  className="ml-auto text-sm text-gray-400 hover:text-red-500"
+                  onClick={() => handleRemove(index)}
+                  className="text-sm text-gray-400 hover:text-red-500"
                 >
                   ×
                 </button>
@@ -111,48 +110,13 @@ export function BroadcasterPicker({
         </div>
       )}
 
-      {/* Combobox for adding broadcasters */}
-      <Combobox
-        multiple
-        value={selectedOptions}
-        onChange={handleSelect}
-        onClose={() => setQuery("")}
+      <button
+        type="button"
+        onClick={handleAdd}
+        className="rounded-md border border-dashed border-gray-300 px-3 py-1.5 text-sm text-gray-600 hover:border-gray-400 hover:text-gray-800"
       >
-        <ComboboxInput
-          className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder={value.length === 0 ? "Search broadcasters…" : "Add more…"}
-        />
-        <ComboboxOptions className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md border border-gray-200 bg-white py-1 shadow-lg">
-          {filtered.length === 0 ? (
-            <div className="px-3 py-2 text-sm text-gray-500">
-              No results found
-            </div>
-          ) : (
-            filtered.map((opt) => (
-              <ComboboxOption
-                key={opt.id}
-                value={opt}
-                className="cursor-pointer px-3 py-2 text-sm data-[focus]:bg-blue-50 data-[selected]:font-medium data-[selected]:text-blue-700"
-              >
-                <span className="flex items-center gap-2">
-                  <span
-                    className={`inline-block h-4 w-4 rounded border text-center text-xs leading-4 ${
-                      selectedIds.includes(opt.id)
-                        ? "border-blue-500 bg-blue-500 text-white"
-                        : "border-gray-300"
-                    }`}
-                  >
-                    {selectedIds.includes(opt.id) ? "✓" : ""}
-                  </span>
-                  {opt.label}
-                </span>
-              </ComboboxOption>
-            ))
-          )}
-        </ComboboxOptions>
-      </Combobox>
+        + Add Broadcaster
+      </button>
     </div>
   );
 }

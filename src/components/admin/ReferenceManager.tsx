@@ -420,6 +420,7 @@ function BroadcasterTab({
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
   const [editType, setEditType] = useState<"tv" | "ott">("tv");
+  const [expandedId, setExpandedId] = useState<string | null>(null);
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
@@ -498,74 +499,244 @@ function BroadcasterTab({
         </button>
       </form>
       {error && <p className="mb-2 text-sm text-red-600">{error}</p>}
-      <ul className="space-y-1">
+      <ul className="space-y-2">
         {items.map((item) => (
           <li
             key={item.id}
-            className="flex items-center justify-between gap-2 rounded-md border border-gray-100 px-3 py-1.5 text-sm"
+            className="rounded-md border border-gray-100"
           >
-            {editingId === item.id ? (
-              <>
-                <div className="flex flex-1 gap-2">
-                  <input
-                    type="text"
-                    value={editName}
-                    onChange={(e) => setEditName(e.target.value)}
-                    className="flex-1 rounded border border-gray-300 px-2 py-0.5 text-sm"
-                  />
-                  <select
-                    value={editType}
-                    onChange={(e) =>
-                      setEditType(e.target.value as "tv" | "ott")
+            <div className="flex items-center justify-between gap-2 px-3 py-1.5 text-sm">
+              {editingId === item.id ? (
+                <>
+                  <div className="flex flex-1 gap-2">
+                    <input
+                      type="text"
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                      className="flex-1 rounded border border-gray-300 px-2 py-0.5 text-sm"
+                    />
+                    <select
+                      value={editType}
+                      onChange={(e) =>
+                        setEditType(e.target.value as "tv" | "ott")
+                      }
+                      className="rounded border border-gray-300 px-2 py-0.5 text-sm"
+                    >
+                      <option value="tv">TV</option>
+                      <option value="ott">OTT</option>
+                    </select>
+                  </div>
+                  <div className="flex gap-1">
+                    <button
+                      onClick={handleSave}
+                      className="text-xs text-blue-600 hover:text-blue-800"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={() => setEditingId(null)}
+                      className="text-xs text-gray-500 hover:text-gray-700"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() =>
+                      setExpandedId(expandedId === item.id ? null : item.id)
                     }
-                    className="rounded border border-gray-300 px-2 py-0.5 text-sm"
+                    className="flex items-center gap-1 text-left"
                   >
-                    <option value="tv">TV</option>
-                    <option value="ott">OTT</option>
-                  </select>
-                </div>
-                <div className="flex gap-1">
-                  <button
-                    onClick={handleSave}
-                    className="text-xs text-blue-600 hover:text-blue-800"
-                  >
-                    Save
+                    <span className="text-xs text-gray-400">
+                      {expandedId === item.id ? "▾" : "▸"}
+                    </span>
+                    <span>
+                      {item.name}{" "}
+                      <span className="rounded bg-gray-100 px-1 text-xs text-gray-500">
+                        {item.type.toUpperCase()}
+                      </span>
+                      {item.channels.length > 0 && (
+                        <span className="ml-1 text-xs text-gray-400">
+                          ({item.channels.length} ch)
+                        </span>
+                      )}
+                    </span>
                   </button>
-                  <button
-                    onClick={() => setEditingId(null)}
-                    className="text-xs text-gray-500 hover:text-gray-700"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </>
-            ) : (
-              <>
-                <span>
-                  {item.name}{" "}
-                  <span className="rounded bg-gray-100 px-1 text-xs text-gray-500">
-                    {item.type.toUpperCase()}
-                  </span>
-                </span>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => startEdit(item)}
-                    className="text-xs text-blue-500 hover:text-blue-700"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(item.id)}
-                    className="text-xs text-red-500 hover:text-red-700"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => startEdit(item)}
+                      className="text-xs text-blue-500 hover:text-blue-700"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(item.id)}
+                      className="text-xs text-red-500 hover:text-red-700"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Channels sub-section */}
+            {expandedId === item.id && editingId !== item.id && (
+              <ChannelSubList
+                broadcasterId={item.id}
+                channels={item.channels}
+                onRefresh={onRefresh}
+              />
             )}
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+function ChannelSubList({
+  broadcasterId,
+  channels,
+  onRefresh,
+}: {
+  broadcasterId: string;
+  channels: ReferenceData["broadcasters"][0]["channels"];
+  onRefresh: () => void;
+}) {
+  const [newName, setNewName] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editName, setEditName] = useState("");
+
+  async function handleAdd(e: React.FormEvent) {
+    e.preventDefault();
+    setError(null);
+    const result = await createReferenceItem({
+      type: "broadcaster_channel",
+      broadcasterId,
+      name: newName,
+    });
+    if (result.success) {
+      setNewName("");
+      onRefresh();
+    } else {
+      setError(result.error ?? "Failed to add channel");
+    }
+  }
+
+  function startEdit(ch: { id: string; name: string }) {
+    setEditingId(ch.id);
+    setEditName(ch.name);
+    setError(null);
+  }
+
+  async function handleSave() {
+    if (!editingId) return;
+    setError(null);
+    const result = await updateReferenceItem({
+      type: "broadcaster_channel",
+      id: editingId,
+      name: editName,
+    });
+    if (result.success) {
+      setEditingId(null);
+      onRefresh();
+    } else {
+      setError(result.error ?? "Failed to update channel");
+    }
+  }
+
+  async function handleDelete(id: string) {
+    setError(null);
+    const result = await deleteReferenceItem({
+      type: "broadcaster_channel",
+      id,
+    });
+    if (result.success) {
+      onRefresh();
+    } else {
+      setError(result.error ?? "Failed to delete channel");
+    }
+  }
+
+  return (
+    <div className="border-t border-gray-100 bg-gray-50 px-3 py-2">
+      <p className="mb-1.5 text-xs font-medium text-gray-500">Channels</p>
+      {error && <p className="mb-1 text-xs text-red-600">{error}</p>}
+
+      {channels.length > 0 && (
+        <ul className="mb-2 space-y-1">
+          {channels.map((ch) => (
+            <li
+              key={ch.id}
+              className="flex items-center justify-between gap-2 text-sm"
+            >
+              {editingId === ch.id ? (
+                <>
+                  <input
+                    type="text"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    className="flex-1 rounded border border-gray-300 px-2 py-0.5 text-xs"
+                  />
+                  <div className="flex gap-1">
+                    <button
+                      onClick={handleSave}
+                      className="text-xs text-blue-600 hover:text-blue-800"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={() => setEditingId(null)}
+                      className="text-xs text-gray-500 hover:text-gray-700"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <span className="text-xs">{ch.name}</span>
+                  <div className="flex gap-1">
+                    <button
+                      onClick={() => startEdit(ch)}
+                      className="text-xs text-blue-500 hover:text-blue-700"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(ch.id)}
+                      className="text-xs text-red-500 hover:text-red-700"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <form onSubmit={handleAdd} className="flex gap-1.5">
+        <input
+          type="text"
+          value={newName}
+          onChange={(e) => setNewName(e.target.value)}
+          placeholder="Channel name (e.g. 620)"
+          required
+          className="flex-1 rounded border border-gray-300 px-2 py-1 text-xs"
+        />
+        <button
+          type="submit"
+          className="rounded bg-blue-600 px-2 py-1 text-xs text-white hover:bg-blue-700"
+        >
+          Add
+        </button>
+      </form>
     </div>
   );
 }

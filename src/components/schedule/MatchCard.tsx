@@ -1,7 +1,30 @@
-import type { MatchEntry } from "@/lib/types";
+import type { MatchEntry, BroadcasterInfo } from "@/lib/types";
 import type { Language } from "./LanguageProvider";
 import { formatTimeHKT } from "@/lib/date";
 import { ConfidenceBadge } from "./ConfidenceBadge";
+
+interface GroupedBroadcaster {
+  id: string;
+  name: string;
+  channels: string[];
+}
+
+function groupBroadcasters(broadcasters: BroadcasterInfo[]): GroupedBroadcaster[] {
+  const map = new Map<string, GroupedBroadcaster>();
+  for (const b of broadcasters) {
+    const existing = map.get(b.id);
+    if (existing) {
+      if (b.channel) existing.channels.push(b.channel);
+    } else {
+      map.set(b.id, {
+        id: b.id,
+        name: b.name,
+        channels: b.channel ? [b.channel] : [],
+      });
+    }
+  }
+  return Array.from(map.values());
+}
 
 interface MatchCardProps {
   match: MatchEntry;
@@ -61,15 +84,15 @@ export function MatchCard({ match, lang }: MatchCardProps) {
             {competitionName(match.competition, lang)}
           </p>
 
-          {/* Broadcasters */}
+          {/* Broadcasters — group channels under same broadcaster */}
           <div className="mt-1.5 flex flex-wrap gap-1.5">
             {match.broadcasters.length > 0 ? (
-              match.broadcasters.map((b) => (
+              groupBroadcasters(match.broadcasters).map((g) => (
                 <span
-                  key={b.id}
+                  key={g.id}
                   className="inline-flex items-center rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/50 dark:text-blue-300"
                 >
-                  {b.name}{b.channel && ` ${b.channel}`}
+                  {g.name}{g.channels.length > 0 && ` ${g.channels.join(", ")}`}
                 </span>
               ))
             ) : (

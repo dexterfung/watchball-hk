@@ -26,7 +26,8 @@ export async function fetchScheduleByDate(
       away_team:teams!away_team_id(id, name_zh, name_en),
       competition:competitions!competition_id(id, name_zh, name_en, short_name_zh),
       match_broadcasters(
-        channel,
+        id,
+        broadcaster_channel:broadcaster_channels(id, name),
         broadcaster:broadcasters(id, name, type)
       )
     `,
@@ -59,12 +60,15 @@ export async function fetchScheduleByDate(
     };
     const broadcasters = (
       m.match_broadcasters as unknown as Array<{
-        channel: string | null;
+        id: string;
+        broadcaster_channel: { id: string; name: string } | null;
         broadcaster: { id: string; name: string; type: "tv" | "ott" };
       }>
     ).map((mb) => ({
       ...mb.broadcaster,
-      channel: mb.channel,
+      channel: mb.broadcaster_channel?.name ?? null,
+      channelId: mb.broadcaster_channel?.id ?? null,
+      rowKey: mb.id,
     }));
 
     return {

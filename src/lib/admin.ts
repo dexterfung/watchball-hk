@@ -20,6 +20,7 @@ export interface ReferenceData {
     name: string;
     type: "tv" | "ott";
     sortOrder: number;
+    channels: Array<{ id: string; name: string; sortOrder: number }>;
   }>;
 }
 
@@ -44,7 +45,8 @@ export async function fetchAdminMatches(
       away_team:teams!away_team_id(id, name_zh, name_en),
       competition:competitions!competition_id(id, name_zh, name_en, short_name_zh),
       match_broadcasters(
-        channel,
+        id,
+        broadcaster_channel:broadcaster_channels(id, name),
         broadcaster:broadcasters(id, name, type)
       )
     `,
@@ -76,12 +78,15 @@ export async function fetchAdminMatches(
     };
     const broadcasters = (
       m.match_broadcasters as unknown as Array<{
-        channel: string | null;
+        id: string;
+        broadcaster_channel: { id: string; name: string } | null;
         broadcaster: { id: string; name: string; type: "tv" | "ott" };
       }>
     ).map((mb) => ({
       ...mb.broadcaster,
-      channel: mb.channel,
+      channel: mb.broadcaster_channel?.name ?? null,
+      channelId: mb.broadcaster_channel?.id ?? null,
+      rowKey: mb.id,
     }));
 
     return {
@@ -125,7 +130,7 @@ export async function fetchReferenceData(): Promise<ReferenceData> {
       .order("name_zh"),
     supabase
       .from("broadcasters")
-      .select("id, name, type, sort_order")
+      .select("id, name, type, sort_order, broadcaster_channels(id, name, sort_order)")
       .order("sort_order")
       .order("name"),
   ]);
@@ -162,6 +167,19 @@ export async function fetchReferenceData(): Promise<ReferenceData> {
       name: b.name,
       type: b.type as "tv" | "ott",
       sortOrder: b.sort_order,
+      channels: (
+        (b.broadcaster_channels as unknown as Array<{
+          id: string;
+          name: string;
+          sort_order: number;
+        }>) ?? []
+      )
+        .sort((a, c) => a.sort_order - c.sort_order)
+        .map((ch) => ({
+          id: ch.id,
+          name: ch.name,
+          sortOrder: ch.sort_order,
+        })),
     })),
   };
 }
@@ -175,7 +193,7 @@ export async function getCopyForwardData(matchId: string) {
       `
       kick_off_utc,
       competition_id,
-      match_broadcasters(broadcaster_id, channel)
+      match_broadcasters(broadcaster_id, broadcaster_channel_id)
     `,
     )
     .eq("id", matchId)
@@ -197,11 +215,11 @@ export async function getCopyForwardData(matchId: string) {
     broadcasters: (
       data.match_broadcasters as unknown as Array<{
         broadcaster_id: string;
-        channel: string | null;
+        broadcaster_channel_id: string | null;
       }>
     ).map((mb) => ({
       broadcasterId: mb.broadcaster_id,
-      channel: mb.channel ?? undefined,
+      channelId: mb.broadcaster_channel_id ?? undefined,
     })),
   };
 }

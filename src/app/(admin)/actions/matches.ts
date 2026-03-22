@@ -88,7 +88,7 @@ export async function createMatch(
         input.broadcasters.map((b) => ({
           match_id: match.id,
           broadcaster_id: b.broadcasterId,
-          channel: b.channel || null,
+          broadcaster_channel_id: b.channelId || null,
         })),
       );
 
@@ -153,7 +153,7 @@ export async function updateMatch(
           input.broadcasters.map((b) => ({
             match_id: input.matchId,
             broadcaster_id: b.broadcasterId,
-            channel: b.channel || null,
+            broadcaster_channel_id: b.channelId || null,
           })),
         );
 

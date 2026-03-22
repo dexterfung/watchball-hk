@@ -55,6 +55,7 @@ export function AdminDashboard({
     id: b.id,
     label: `${b.name} (${b.type.toUpperCase()})`,
     type: b.type,
+    channels: b.channels,
   }));
 
   const handleSubmit = useCallback(
@@ -126,7 +127,7 @@ export function AdminDashboard({
       competitionId: match.competition.id,
       broadcasters: match.broadcasters.map((b) => ({
         broadcasterId: b.id,
-        channel: b.channel ?? undefined,
+        channelId: b.channelId ?? undefined,
       })),
       confidence: match.confidence,
     });
