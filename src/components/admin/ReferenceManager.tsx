@@ -71,10 +71,12 @@ function CompetitionTab({
 }) {
   const [nameZh, setNameZh] = useState("");
   const [nameEn, setNameEn] = useState("");
+  const [shortNameZh, setShortNameZh] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editNameZh, setEditNameZh] = useState("");
   const [editNameEn, setEditNameEn] = useState("");
+  const [editShortNameZh, setEditShortNameZh] = useState("");
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
@@ -83,10 +85,12 @@ function CompetitionTab({
       type: "competition",
       nameZh,
       nameEn: nameEn || undefined,
+      shortNameZh: shortNameZh || undefined,
     });
     if (result.success) {
       setNameZh("");
       setNameEn("");
+      setShortNameZh("");
       onRefresh();
     } else {
       setError(result.error ?? "Failed to add");
@@ -97,6 +101,7 @@ function CompetitionTab({
     setEditingId(item.id);
     setEditNameZh(item.nameZh);
     setEditNameEn(item.nameEn ?? "");
+    setEditShortNameZh(item.shortNameZh ?? "");
     setError(null);
   }
 
@@ -108,6 +113,7 @@ function CompetitionTab({
       id: editingId,
       nameZh: editNameZh,
       nameEn: editNameEn,
+      shortNameZh: editShortNameZh,
     });
     if (result.success) {
       setEditingId(null);
@@ -145,6 +151,13 @@ function CompetitionTab({
           placeholder="Name (English)"
           className="rounded-md border border-gray-300 px-3 py-1.5 text-sm"
         />
+        <input
+          type="text"
+          value={shortNameZh}
+          onChange={(e) => setShortNameZh(e.target.value)}
+          placeholder="Short (e.g. 英超)"
+          className="w-28 rounded-md border border-gray-300 px-3 py-1.5 text-sm"
+        />
         <button
           type="submit"
           className="rounded-md bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-700"
@@ -175,6 +188,13 @@ function CompetitionTab({
                     placeholder="English"
                     className="flex-1 rounded border border-gray-300 px-2 py-0.5 text-sm"
                   />
+                  <input
+                    type="text"
+                    value={editShortNameZh}
+                    onChange={(e) => setEditShortNameZh(e.target.value)}
+                    placeholder="Short"
+                    className="w-20 rounded border border-gray-300 px-2 py-0.5 text-sm"
+                  />
                 </div>
                 <div className="flex gap-1">
                   <button
@@ -195,6 +215,11 @@ function CompetitionTab({
               <>
                 <span>
                   {item.nameZh}
+                  {item.shortNameZh && (
+                    <span className="ml-1 rounded bg-blue-50 px-1.5 text-xs text-blue-600">
+                      {item.shortNameZh}
+                    </span>
+                  )}
                   {item.nameEn && (
                     <span className="ml-1 text-gray-500">({item.nameEn})</span>
                   )}

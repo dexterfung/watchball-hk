@@ -53,6 +53,7 @@ export async function createReferenceItem(
       .insert({
         name_zh: input.nameZh!,
         name_en: input.nameEn || null,
+        short_name_zh: input.shortNameZh || null,
         sort_order: input.sortOrder ?? 0,
       })
       .select("id")
@@ -119,6 +120,7 @@ export async function updateReferenceItem(
     const updates: Record<string, unknown> = {};
     if (input.nameZh !== undefined) updates.name_zh = input.nameZh;
     if (input.nameEn !== undefined) updates.name_en = input.nameEn || null;
+    if (input.shortNameZh !== undefined) updates.short_name_zh = input.shortNameZh || null;
     if (input.sortOrder !== undefined) updates.sort_order = input.sortOrder;
 
     const { error } = await supabase

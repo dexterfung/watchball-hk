@@ -28,6 +28,7 @@ export interface CompetitionInfo {
   id: string;
   nameZh: string;
   nameEn: string | null;
+  shortNameZh: string | null;
 }
 
 export interface BroadcasterInfo {
@@ -106,6 +107,7 @@ export interface CreateReferenceInput {
   type: "competition" | "team" | "broadcaster";
   nameZh?: string;
   nameEn?: string;
+  shortNameZh?: string; // Competition only
   name?: string; // Required for broadcaster
   broadcasterType?: "tv" | "ott"; // Required for broadcaster
   sortOrder?: number;
@@ -122,6 +124,7 @@ export interface UpdateReferenceInput {
   id: string;
   nameZh?: string;
   nameEn?: string;
+  shortNameZh?: string; // Competition only
   name?: string;
   broadcasterType?: "tv" | "ott";
   sortOrder?: number;

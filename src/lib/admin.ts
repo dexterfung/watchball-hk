@@ -7,6 +7,7 @@ export interface ReferenceData {
     id: string;
     nameZh: string;
     nameEn: string | null;
+    shortNameZh: string | null;
     sortOrder: number;
   }>;
   teams: Array<{
@@ -41,7 +42,7 @@ export async function fetchAdminMatches(
       source_type,
       home_team:teams!home_team_id(id, name_zh, name_en),
       away_team:teams!away_team_id(id, name_zh, name_en),
-      competition:competitions!competition_id(id, name_zh, name_en),
+      competition:competitions!competition_id(id, name_zh, name_en, short_name_zh),
       match_broadcasters(
         channel,
         broadcaster:broadcasters(id, name, type)
@@ -71,6 +72,7 @@ export async function fetchAdminMatches(
       id: string;
       name_zh: string;
       name_en: string | null;
+      short_name_zh: string | null;
     };
     const broadcasters = (
       m.match_broadcasters as unknown as Array<{
@@ -99,6 +101,7 @@ export async function fetchAdminMatches(
         id: competition.id,
         nameZh: competition.name_zh,
         nameEn: competition.name_en,
+        shortNameZh: competition.short_name_zh,
       },
       broadcasters,
       confidence: m.confidence as MatchEntry["confidence"],
@@ -113,7 +116,7 @@ export async function fetchReferenceData(): Promise<ReferenceData> {
   const [competitionsRes, teamsRes, broadcastersRes] = await Promise.all([
     supabase
       .from("competitions")
-      .select("id, name_zh, name_en, sort_order")
+      .select("id, name_zh, name_en, short_name_zh, sort_order")
       .order("sort_order")
       .order("name_zh"),
     supabase
@@ -146,6 +149,7 @@ export async function fetchReferenceData(): Promise<ReferenceData> {
       id: c.id,
       nameZh: c.name_zh,
       nameEn: c.name_en,
+      shortNameZh: c.short_name_zh,
       sortOrder: c.sort_order,
     })),
     teams: (teamsRes.data ?? []).map((t) => ({

@@ -24,7 +24,7 @@ export async function fetchScheduleByDate(
       source_type,
       home_team:teams!home_team_id(id, name_zh, name_en),
       away_team:teams!away_team_id(id, name_zh, name_en),
-      competition:competitions!competition_id(id, name_zh, name_en),
+      competition:competitions!competition_id(id, name_zh, name_en, short_name_zh),
       match_broadcasters(
         channel,
         broadcaster:broadcasters(id, name, type)
@@ -55,6 +55,7 @@ export async function fetchScheduleByDate(
       id: string;
       name_zh: string;
       name_en: string | null;
+      short_name_zh: string | null;
     };
     const broadcasters = (
       m.match_broadcasters as unknown as Array<{
@@ -82,6 +83,7 @@ export async function fetchScheduleByDate(
       competition: {
         id: competition.id,
         nameZh: competition.name_zh,
+        shortNameZh: competition.short_name_zh,
         nameEn: competition.name_en,
       },
       broadcasters,
