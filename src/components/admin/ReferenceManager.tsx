@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import type { ReferenceData } from "@/lib/admin";
 import {
   createReferenceItem,
+  updateReferenceItem,
   deleteReferenceItem,
 } from "@/app/(admin)/actions/reference";
 
@@ -71,7 +72,9 @@ function CompetitionTab({
   const [nameZh, setNameZh] = useState("");
   const [nameEn, setNameEn] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editNameZh, setEditNameZh] = useState("");
+  const [editNameEn, setEditNameEn] = useState("");
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
@@ -90,13 +93,37 @@ function CompetitionTab({
     }
   }
 
+  function startEdit(item: ReferenceData["competitions"][0]) {
+    setEditingId(item.id);
+    setEditNameZh(item.nameZh);
+    setEditNameEn(item.nameEn ?? "");
+    setError(null);
+  }
+
+  async function handleSave() {
+    if (!editingId) return;
+    setError(null);
+    const result = await updateReferenceItem({
+      type: "competition",
+      id: editingId,
+      nameZh: editNameZh,
+      nameEn: editNameEn,
+    });
+    if (result.success) {
+      setEditingId(null);
+      onRefresh();
+    } else {
+      setError(result.error ?? "Failed to update");
+    }
+  }
+
   async function handleDelete(id: string) {
-    setDeleteError(null);
+    setError(null);
     const result = await deleteReferenceItem({ type: "competition", id });
     if (result.success) {
       onRefresh();
     } else {
-      setDeleteError(result.error ?? "Failed to delete");
+      setError(result.error ?? "Failed to delete");
     }
   }
 
@@ -126,27 +153,68 @@ function CompetitionTab({
         </button>
       </form>
       {error && <p className="mb-2 text-sm text-red-600">{error}</p>}
-      {deleteError && (
-        <p className="mb-2 text-sm text-red-600">{deleteError}</p>
-      )}
       <ul className="space-y-1">
         {items.map((item) => (
           <li
             key={item.id}
-            className="flex items-center justify-between rounded-md border border-gray-100 px-3 py-1.5 text-sm"
+            className="flex items-center justify-between gap-2 rounded-md border border-gray-100 px-3 py-1.5 text-sm"
           >
-            <span>
-              {item.nameZh}
-              {item.nameEn && (
-                <span className="ml-1 text-gray-500">({item.nameEn})</span>
-              )}
-            </span>
-            <button
-              onClick={() => handleDelete(item.id)}
-              className="text-xs text-red-500 hover:text-red-700"
-            >
-              Delete
-            </button>
+            {editingId === item.id ? (
+              <>
+                <div className="flex flex-1 gap-2">
+                  <input
+                    type="text"
+                    value={editNameZh}
+                    onChange={(e) => setEditNameZh(e.target.value)}
+                    className="flex-1 rounded border border-gray-300 px-2 py-0.5 text-sm"
+                  />
+                  <input
+                    type="text"
+                    value={editNameEn}
+                    onChange={(e) => setEditNameEn(e.target.value)}
+                    placeholder="English"
+                    className="flex-1 rounded border border-gray-300 px-2 py-0.5 text-sm"
+                  />
+                </div>
+                <div className="flex gap-1">
+                  <button
+                    onClick={handleSave}
+                    className="text-xs text-blue-600 hover:text-blue-800"
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={() => setEditingId(null)}
+                    className="text-xs text-gray-500 hover:text-gray-700"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <span>
+                  {item.nameZh}
+                  {item.nameEn && (
+                    <span className="ml-1 text-gray-500">({item.nameEn})</span>
+                  )}
+                </span>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => startEdit(item)}
+                    className="text-xs text-blue-500 hover:text-blue-700"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(item.id)}
+                    className="text-xs text-red-500 hover:text-red-700"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </>
+            )}
           </li>
         ))}
       </ul>
@@ -164,7 +232,9 @@ function TeamTab({
   const [nameZh, setNameZh] = useState("");
   const [nameEn, setNameEn] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editNameZh, setEditNameZh] = useState("");
+  const [editNameEn, setEditNameEn] = useState("");
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
@@ -183,13 +253,37 @@ function TeamTab({
     }
   }
 
+  function startEdit(item: ReferenceData["teams"][0]) {
+    setEditingId(item.id);
+    setEditNameZh(item.nameZh);
+    setEditNameEn(item.nameEn ?? "");
+    setError(null);
+  }
+
+  async function handleSave() {
+    if (!editingId) return;
+    setError(null);
+    const result = await updateReferenceItem({
+      type: "team",
+      id: editingId,
+      nameZh: editNameZh,
+      nameEn: editNameEn,
+    });
+    if (result.success) {
+      setEditingId(null);
+      onRefresh();
+    } else {
+      setError(result.error ?? "Failed to update");
+    }
+  }
+
   async function handleDelete(id: string) {
-    setDeleteError(null);
+    setError(null);
     const result = await deleteReferenceItem({ type: "team", id });
     if (result.success) {
       onRefresh();
     } else {
-      setDeleteError(result.error ?? "Failed to delete");
+      setError(result.error ?? "Failed to delete");
     }
   }
 
@@ -219,27 +313,68 @@ function TeamTab({
         </button>
       </form>
       {error && <p className="mb-2 text-sm text-red-600">{error}</p>}
-      {deleteError && (
-        <p className="mb-2 text-sm text-red-600">{deleteError}</p>
-      )}
       <ul className="space-y-1">
         {items.map((item) => (
           <li
             key={item.id}
-            className="flex items-center justify-between rounded-md border border-gray-100 px-3 py-1.5 text-sm"
+            className="flex items-center justify-between gap-2 rounded-md border border-gray-100 px-3 py-1.5 text-sm"
           >
-            <span>
-              {item.nameZh}
-              {item.nameEn && (
-                <span className="ml-1 text-gray-500">({item.nameEn})</span>
-              )}
-            </span>
-            <button
-              onClick={() => handleDelete(item.id)}
-              className="text-xs text-red-500 hover:text-red-700"
-            >
-              Delete
-            </button>
+            {editingId === item.id ? (
+              <>
+                <div className="flex flex-1 gap-2">
+                  <input
+                    type="text"
+                    value={editNameZh}
+                    onChange={(e) => setEditNameZh(e.target.value)}
+                    className="flex-1 rounded border border-gray-300 px-2 py-0.5 text-sm"
+                  />
+                  <input
+                    type="text"
+                    value={editNameEn}
+                    onChange={(e) => setEditNameEn(e.target.value)}
+                    placeholder="English"
+                    className="flex-1 rounded border border-gray-300 px-2 py-0.5 text-sm"
+                  />
+                </div>
+                <div className="flex gap-1">
+                  <button
+                    onClick={handleSave}
+                    className="text-xs text-blue-600 hover:text-blue-800"
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={() => setEditingId(null)}
+                    className="text-xs text-gray-500 hover:text-gray-700"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <span>
+                  {item.nameZh}
+                  {item.nameEn && (
+                    <span className="ml-1 text-gray-500">({item.nameEn})</span>
+                  )}
+                </span>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => startEdit(item)}
+                    className="text-xs text-blue-500 hover:text-blue-700"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(item.id)}
+                    className="text-xs text-red-500 hover:text-red-700"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </>
+            )}
           </li>
         ))}
       </ul>
@@ -257,7 +392,9 @@ function BroadcasterTab({
   const [name, setName] = useState("");
   const [type, setType] = useState<"tv" | "ott">("tv");
   const [error, setError] = useState<string | null>(null);
-  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editType, setEditType] = useState<"tv" | "ott">("tv");
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
@@ -275,13 +412,37 @@ function BroadcasterTab({
     }
   }
 
+  function startEdit(item: ReferenceData["broadcasters"][0]) {
+    setEditingId(item.id);
+    setEditName(item.name);
+    setEditType(item.type);
+    setError(null);
+  }
+
+  async function handleSave() {
+    if (!editingId) return;
+    setError(null);
+    const result = await updateReferenceItem({
+      type: "broadcaster",
+      id: editingId,
+      name: editName,
+      broadcasterType: editType,
+    });
+    if (result.success) {
+      setEditingId(null);
+      onRefresh();
+    } else {
+      setError(result.error ?? "Failed to update");
+    }
+  }
+
   async function handleDelete(id: string) {
-    setDeleteError(null);
+    setError(null);
     const result = await deleteReferenceItem({ type: "broadcaster", id });
     if (result.success) {
       onRefresh();
     } else {
-      setDeleteError(result.error ?? "Failed to delete");
+      setError(result.error ?? "Failed to delete");
     }
   }
 
@@ -312,27 +473,71 @@ function BroadcasterTab({
         </button>
       </form>
       {error && <p className="mb-2 text-sm text-red-600">{error}</p>}
-      {deleteError && (
-        <p className="mb-2 text-sm text-red-600">{deleteError}</p>
-      )}
       <ul className="space-y-1">
         {items.map((item) => (
           <li
             key={item.id}
-            className="flex items-center justify-between rounded-md border border-gray-100 px-3 py-1.5 text-sm"
+            className="flex items-center justify-between gap-2 rounded-md border border-gray-100 px-3 py-1.5 text-sm"
           >
-            <span>
-              {item.name}{" "}
-              <span className="rounded bg-gray-100 px-1 text-xs text-gray-500">
-                {item.type.toUpperCase()}
-              </span>
-            </span>
-            <button
-              onClick={() => handleDelete(item.id)}
-              className="text-xs text-red-500 hover:text-red-700"
-            >
-              Delete
-            </button>
+            {editingId === item.id ? (
+              <>
+                <div className="flex flex-1 gap-2">
+                  <input
+                    type="text"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    className="flex-1 rounded border border-gray-300 px-2 py-0.5 text-sm"
+                  />
+                  <select
+                    value={editType}
+                    onChange={(e) =>
+                      setEditType(e.target.value as "tv" | "ott")
+                    }
+                    className="rounded border border-gray-300 px-2 py-0.5 text-sm"
+                  >
+                    <option value="tv">TV</option>
+                    <option value="ott">OTT</option>
+                  </select>
+                </div>
+                <div className="flex gap-1">
+                  <button
+                    onClick={handleSave}
+                    className="text-xs text-blue-600 hover:text-blue-800"
+                  >
+                    Save
+                  </button>
+                  <button
+                    onClick={() => setEditingId(null)}
+                    className="text-xs text-gray-500 hover:text-gray-700"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <span>
+                  {item.name}{" "}
+                  <span className="rounded bg-gray-100 px-1 text-xs text-gray-500">
+                    {item.type.toUpperCase()}
+                  </span>
+                </span>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => startEdit(item)}
+                    className="text-xs text-blue-500 hover:text-blue-700"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(item.id)}
+                    className="text-xs text-red-500 hover:text-red-700"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </>
+            )}
           </li>
         ))}
       </ul>

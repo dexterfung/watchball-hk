@@ -5,6 +5,8 @@ import { cookies } from "next/headers";
 import type {
   CreateReferenceInput,
   CreateReferenceResult,
+  UpdateReferenceInput,
+  UpdateReferenceResult,
   DeleteReferenceInput,
   DeleteReferenceResult,
 } from "@/lib/types";
@@ -102,6 +104,68 @@ export async function createReferenceItem(
       return { success: false, error: error.message };
     }
     return { success: true, item: { id: data.id } };
+  }
+
+  return { success: false, error: "Invalid type" };
+}
+
+export async function updateReferenceItem(
+  input: UpdateReferenceInput,
+): Promise<UpdateReferenceResult> {
+  const { supabase, error: authError } = await getAuthenticatedClient();
+  if (!supabase) return { success: false, error: authError! };
+
+  if (input.type === "competition") {
+    const updates: Record<string, unknown> = {};
+    if (input.nameZh !== undefined) updates.name_zh = input.nameZh;
+    if (input.nameEn !== undefined) updates.name_en = input.nameEn || null;
+    if (input.sortOrder !== undefined) updates.sort_order = input.sortOrder;
+
+    const { error } = await supabase
+      .from("competitions")
+      .update(updates)
+      .eq("id", input.id);
+
+    if (error) {
+      if (error.code === "23505") return { success: false, error: "Duplicate name" };
+      return { success: false, error: error.message };
+    }
+    return { success: true };
+  }
+
+  if (input.type === "team") {
+    const updates: Record<string, unknown> = {};
+    if (input.nameZh !== undefined) updates.name_zh = input.nameZh;
+    if (input.nameEn !== undefined) updates.name_en = input.nameEn || null;
+
+    const { error } = await supabase
+      .from("teams")
+      .update(updates)
+      .eq("id", input.id);
+
+    if (error) {
+      if (error.code === "23505") return { success: false, error: "Duplicate name" };
+      return { success: false, error: error.message };
+    }
+    return { success: true };
+  }
+
+  if (input.type === "broadcaster") {
+    const updates: Record<string, unknown> = {};
+    if (input.name !== undefined) updates.name = input.name;
+    if (input.broadcasterType !== undefined) updates.type = input.broadcasterType;
+    if (input.sortOrder !== undefined) updates.sort_order = input.sortOrder;
+
+    const { error } = await supabase
+      .from("broadcasters")
+      .update(updates)
+      .eq("id", input.id);
+
+    if (error) {
+      if (error.code === "23505") return { success: false, error: "Duplicate name" };
+      return { success: false, error: error.message };
+    }
+    return { success: true };
   }
 
   return { success: false, error: "Invalid type" };

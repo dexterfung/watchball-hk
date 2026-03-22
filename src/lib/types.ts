@@ -117,6 +117,21 @@ export interface CreateReferenceResult {
   error?: string;
 }
 
+export interface UpdateReferenceInput {
+  type: "competition" | "team" | "broadcaster";
+  id: string;
+  nameZh?: string;
+  nameEn?: string;
+  name?: string;
+  broadcasterType?: "tv" | "ott";
+  sortOrder?: number;
+}
+
+export interface UpdateReferenceResult {
+  success: boolean;
+  error?: string;
+}
+
 export interface DeleteReferenceInput {
   type: "competition" | "team" | "broadcaster";
   id: string;
