@@ -1,9 +1,11 @@
 import type { MatchEntry } from "@/lib/types";
+import type { Language } from "./LanguageProvider";
 import { formatTimeHKT } from "@/lib/date";
 import { ConfidenceBadge } from "./ConfidenceBadge";
 
 interface MatchCardProps {
   match: MatchEntry;
+  lang: Language;
 }
 
 const STALENESS_THRESHOLD_DAYS = parseInt(
@@ -17,7 +19,20 @@ function isStale(lastUpdated: string): boolean {
   return updated < threshold;
 }
 
-export function MatchCard({ match }: MatchCardProps) {
+function teamName(team: { nameZh: string; nameEn: string | null }, lang: Language) {
+  if (lang === "en") return team.nameEn || team.nameZh;
+  return team.nameZh;
+}
+
+function competitionName(
+  comp: { nameZh: string; nameEn: string | null; shortNameZh: string | null },
+  lang: Language,
+) {
+  if (lang === "en") return comp.nameEn || comp.nameZh;
+  return comp.nameZh;
+}
+
+export function MatchCard({ match, lang }: MatchCardProps) {
   const time = formatTimeHKT(match.kickOffHKT);
   const stale = isStale(match.lastUpdated);
 
@@ -36,25 +51,14 @@ export function MatchCard({ match }: MatchCardProps) {
         <div className="min-w-0 flex-1">
           {/* Teams */}
           <p className="text-base font-medium text-gray-900 dark:text-gray-100">
-            {match.homeTeam.nameZh}
-            {match.homeTeam.nameEn && (
-              <span className="ml-1 text-xs font-normal text-gray-400 dark:text-gray-500">{match.homeTeam.nameEn}</span>
-            )}
+            {teamName(match.homeTeam, lang)}
             <span className="mx-1.5 text-xs font-normal text-gray-400 dark:text-gray-500">vs</span>
-            {match.awayTeam.nameZh}
-            {match.awayTeam.nameEn && (
-              <span className="ml-1 text-xs font-normal text-gray-400 dark:text-gray-500">{match.awayTeam.nameEn}</span>
-            )}
+            {teamName(match.awayTeam, lang)}
           </p>
 
           {/* Competition */}
           <p className="mt-1.5 text-sm text-gray-600 dark:text-gray-400">
-            {match.competition.nameZh}
-            {match.competition.nameEn && (
-              <span className="ml-1 text-xs text-gray-400 dark:text-gray-500">
-                {match.competition.nameEn}
-              </span>
-            )}
+            {competitionName(match.competition, lang)}
           </p>
 
           {/* Broadcasters */}
@@ -70,17 +74,17 @@ export function MatchCard({ match }: MatchCardProps) {
               ))
             ) : (
               <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs text-gray-500 dark:bg-gray-700 dark:text-gray-400">
-                待定
+                {lang === "zh" ? "待定" : "TBC"}
               </span>
             )}
           </div>
 
           {/* Confidence badge + staleness */}
           <div className="mt-1.5 flex flex-wrap gap-1.5">
-            <ConfidenceBadge confidence={match.confidence} />
+            <ConfidenceBadge confidence={match.confidence} lang={lang} />
             {stale && (
               <span className="inline-flex items-center rounded-md bg-orange-50 px-2 py-0.5 text-xs text-orange-600 ring-1 ring-orange-500/20 ring-inset dark:bg-orange-950 dark:text-orange-400 dark:ring-orange-500/30">
-                資料可能過時
+                {lang === "zh" ? "資料可能過時" : "May be outdated"}
               </span>
             )}
           </div>
@@ -89,4 +93,3 @@ export function MatchCard({ match }: MatchCardProps) {
     </article>
   );
 }
-

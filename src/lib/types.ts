@@ -46,6 +46,7 @@ export interface BroadcasterSelection {
 export interface FilterOption {
   id: string;
   label: string; // nameZh for display
+  labelEn: string | null;
 }
 
 // ============================================================

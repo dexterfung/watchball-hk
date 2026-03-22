@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { MatchEntry, FilterOption } from "@/lib/types";
+import { useLanguage } from "./LanguageProvider";
 import { MatchCard } from "./MatchCard";
 import { EmptyState } from "./EmptyState";
 import { FilterBar } from "./FilterBar";
@@ -13,6 +14,7 @@ interface MatchListProps {
 }
 
 export function MatchList({ matches, competitions, teams }: MatchListProps) {
+  const { lang } = useLanguage();
   const [activeCompetitionId, setActiveCompetitionId] = useState<string | null>(
     null,
   );
@@ -53,6 +55,7 @@ export function MatchList({ matches, competitions, teams }: MatchListProps) {
           activeTeamId={activeTeamId}
           onCompetitionChange={setActiveCompetitionId}
           onTeamChange={setActiveTeamId}
+          lang={lang}
         />
       )}
 
@@ -60,14 +63,17 @@ export function MatchList({ matches, competitions, teams }: MatchListProps) {
         <EmptyState
           message={
             hasActiveFilter
-              ? "沒有符合篩選條件的賽事"
-              : "今日暫無賽事直播"
+              ? lang === "zh"
+                ? "沒有符合篩選條件的賽事"
+                : "No matches found for this filter"
+              : undefined
           }
           onClearFilters={hasActiveFilter ? clearFilters : undefined}
+          lang={lang}
         />
       ) : (
         filteredMatches.map((match) => (
-          <MatchCard key={match.id} match={match} />
+          <MatchCard key={match.id} match={match} lang={lang} />
         ))
       )}
     </div>

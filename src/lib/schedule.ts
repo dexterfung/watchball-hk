@@ -101,18 +101,21 @@ export async function fetchScheduleByDate(
       competitionMap.set(match.competition.id, {
         id: match.competition.id,
         label: match.competition.nameZh,
+        labelEn: match.competition.nameEn,
       });
     }
     if (!teamMap.has(match.homeTeam.id)) {
       teamMap.set(match.homeTeam.id, {
         id: match.homeTeam.id,
         label: match.homeTeam.nameZh,
+        labelEn: match.homeTeam.nameEn,
       });
     }
     if (!teamMap.has(match.awayTeam.id)) {
       teamMap.set(match.awayTeam.id, {
         id: match.awayTeam.id,
         label: match.awayTeam.nameZh,
+        labelEn: match.awayTeam.nameEn,
       });
     }
   }
