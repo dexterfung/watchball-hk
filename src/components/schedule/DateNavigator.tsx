@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { formatDateHKT, getTodayHKT } from "@/lib/date";
 import { useLanguage } from "./LanguageProvider";
 
@@ -56,13 +57,13 @@ export function DateNavigator({ currentDate }: DateNavigatorProps) {
           ‹
         </span>
       ) : (
-        <a
+        <Link
           href={`/?date=${prevDate}`}
           aria-label={lang === "zh" ? "前一日" : "Previous day"}
           className="flex h-11 w-11 items-center justify-center rounded-lg text-lg font-bold text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
         >
           ‹
-        </a>
+        </Link>
       )}
 
       <div className="text-center">
@@ -82,13 +83,13 @@ export function DateNavigator({ currentDate }: DateNavigatorProps) {
           ›
         </span>
       ) : (
-        <a
+        <Link
           href={`/?date=${nextDate}`}
           aria-label={lang === "zh" ? "後一日" : "Next day"}
           className="flex h-11 w-11 items-center justify-center rounded-lg text-lg font-bold text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
         >
           ›
-        </a>
+        </Link>
       )}
     </nav>
   );
